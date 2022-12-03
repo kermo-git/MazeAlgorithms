@@ -6,6 +6,8 @@ It is an interactive web application that visualizes maze generation step by ste
 
 The user can select the size of the maze and an algorithm. Then he/she can run either a single step with a click of a button or a continuous loop until the end.
 
+I got inspiration for this project from [this blog](https://weblog.jamisbuck.org/under-the-hood/).
+
 ## Setup
 
 1) Install Node.js
