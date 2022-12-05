@@ -39,9 +39,6 @@ module.exports = {
 					{ loader: MiniCssExtractPlugin.loader }, 
 					"css-loader"
 				]
-			}, {
-				test: /\.(glsl)$/,
-				use: "ts-shader-loader"
 			}
 		]
     },
