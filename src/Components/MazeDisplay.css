@@ -1,0 +1,20 @@
+.maze {
+    display: grid;
+    --maze-border: 4px solid black;
+    border-bottom: var(--maze-border);
+    border-right: var(--maze-border);
+}
+
+.cell {
+    border: var(--maze-border);
+    border-bottom: none;
+    border-right: none;
+}
+
+.cell.north-open {
+    border-top: none;
+}
+
+.cell.west-open {
+    border-left: none;
+}
