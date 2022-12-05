@@ -11,7 +11,7 @@ export function App() {
     // Inputs for maze dimensions
     // Button to advance one step in the algorithm
 
-    return (<MazeDisplay maze={exampleMaze()}/>)
+    return (<MazeDisplay maze = {exampleMaze()}/>)
 }
 
 function exampleMaze(): Maze {

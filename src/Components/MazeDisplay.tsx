@@ -22,13 +22,13 @@ export function MazeDisplay({maze}: Props) {
 
             cells.push((
                 <div 
-                    key={10*x + y}
-                    className={
+                    key = {10*x + y}
+                    className = {
                         "cell" + 
                         (cell.northOpen ? " north-open" : "") + 
                         (cell.westOpen ? " west-open" : "")
                     }
-                    style={{
+                    style = {{
                         gridRow: height - y,
                         gridColumn: x + 1,
                         backgroundColor: cell.color
@@ -40,10 +40,8 @@ export function MazeDisplay({maze}: Props) {
 
     return (
         <div 
-            className="maze"
-            style={{
-                gridTemplateColumns: `repeat(${width}, ${CELL_SIZE_PX}px)`,
-                gridTemplateRows: `repeat(${height}, ${CELL_SIZE_PX}px)`,
+            className = "maze"
+            style = {{
                 width: `${width * CELL_SIZE_PX}px`,
                 height: `${height * CELL_SIZE_PX}px`
             }}
