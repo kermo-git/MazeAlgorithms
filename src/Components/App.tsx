@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { initializeMaze, openWall, cellAt } from "../Algorithms/Maze"
+import { initializeMaze, openWall, cellAt, Maze } from "../Algorithms/Maze"
 import { MazeDisplay } from "./MazeDisplay"
 
 import "./App.css"
@@ -14,7 +14,7 @@ export function App() {
     return (<MazeDisplay maze={exampleMaze()}/>)
 }
 
-function exampleMaze() {
+function exampleMaze(): Maze {
     const maze = initializeMaze(3, 3)
 
     openWall(maze, {X: 0, Y: 0}, "north")
