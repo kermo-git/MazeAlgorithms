@@ -7,7 +7,7 @@ const distPath = path.resolve(__dirname, "dist")
 
 module.exports = {
     mode: "development",
-    entry: path.resolve(__dirname, "/src/index.tsx"),
+    entry: path.resolve(__dirname, "src", "index.tsx"),
 
 	resolve: {
 		extensions: [".ts", ".tsx", ".js"]
@@ -56,7 +56,7 @@ module.exports = {
 	devServer: {
 		static: distPath,
 		port: 3000,
-		watchFiles: [path.resolve(__dirname, "/src")],
+		watchFiles: [path.resolve(__dirname, "src")],
 		liveReload: true
 	},
 }
