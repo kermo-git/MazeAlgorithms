@@ -11,27 +11,25 @@ interface Props {
 const CELL_SIZE_PX = 100
 
 export function MazeDisplay({maze}: Props) {
-    const width = maze.length
-    const height = maze[0].length
+    const width = maze.nColumns()
+    const height = maze.nRows()
 
     let cells = []
 
-    for (let x = 0; x < width; x++) {
-        for (let y = 0; y < height; y++) {
-            const cell = maze[x][y]
-
+    for (let X = 0; X < width; X++) {
+        for (let Y = 0; Y < height; Y++) {
             cells.push((
                 <div 
-                    key = {10*x + y}
+                    key = {10*X + Y}
                     className = {
                         "cell" + 
-                        (cell.northOpen ? " north-open" : "") + 
-                        (cell.westOpen ? " west-open" : "")
+                        (maze.isOpen({X, Y}, "north") ? " north-open" : "") + 
+                        (maze.isOpen({X, Y}, "west") ? " west-open" : "")
                     }
                     style = {{
-                        gridRow: height - y,
-                        gridColumn: x + 1,
-                        backgroundColor: cell.color
+                        gridRow: height - Y,
+                        gridColumn: X + 1,
+                        backgroundColor: maze.getColor({X, Y})
                     }}
                 />
             ))

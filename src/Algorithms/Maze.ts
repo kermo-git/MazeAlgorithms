@@ -1,19 +1,8 @@
-export interface Cell {
+interface Cell {
     northOpen: boolean
     westOpen: boolean
     visited: boolean
     color: string
-}
-
-export type Maze = Cell[][]
-
-export interface MazeAlgorithm {
-    maze: Maze
-    /**
-     * Runs a single iteration of the algorithm.
-     * Return value indicates whether it finised or not.
-     */
-    step: () => boolean
 }
 
 export type Direction = "north" | "east" | "south" | "west"
@@ -23,26 +12,103 @@ export interface Position {
     Y: number
 }
 
-export function initializeMaze(width: number, height: number): Maze {
-    let maze: Maze = []
+export class Maze {
+    private cells: Cell[][]
+
+    constructor(cols: number, rows: number) {
+        this.cells = []
     
-    for (let x = 0; x < width; x++) {
-        let column: Cell[] = []
-        for (let y = 0; y < height; y++) {
-            column.push({
-                northOpen: false,
-                westOpen: false,
-                visited: false,
-                color: "#FFFFFF"
-            })
+        for (let x = 0; x < cols; x++) {
+            let column: Cell[] = []
+            for (let y = 0; y < rows; y++) {
+                column.push({
+                    northOpen: false,
+                    westOpen: false,
+                    visited: false,
+                    color: "#FFFFFF"
+                })
+            }
+            this.cells.push(column)
         }
-        maze.push(column)
     }
-    return maze
+
+    nColumns(): number {
+        return this.cells.length
+    }
+
+    nRows(): number {
+        return this.cells[0].length
+    }
+
+    neighborDirections({X, Y}: Position): Direction[] {
+        let result: Direction[] = []
+    
+        if (X > 0) {
+            result.push("west")
+        }
+        if (X < this.nColumns() - 1) {
+            result.push("east")
+        }
+        if (Y > 0) {
+            result.push("south")
+        }
+        if (Y < this.nRows() - 1) {
+            result.push("north")
+        }
+    
+        return result
+    }
+
+    private get({X, Y}: Position): Cell {
+        return this.cells[X][Y]
+    }
+
+    openWall(location: Position, direction: Direction): void {
+        switch (direction) {
+            case "north":
+                this.get(location).northOpen = true
+                return
+            case "south":       
+                this.get(move(location, "south")).northOpen = true
+                return
+            case "west":
+                this.get(location).westOpen = true
+                return
+            case "east":
+                this.get(move(location, "east")).westOpen = true
+                return
+        }
+    }
+
+    isOpen(location: Position, direction: Direction): boolean {
+        switch (direction) {
+            case "north":
+                return this.get(location).northOpen
+            case "south":       
+                return this.get(move(location, "south")).northOpen
+            case "west":
+                return this.get(location).westOpen
+            case "east":
+                return this.get(move(location, "east")).westOpen
+        }
+    }
+
+    setColor(location: Position, color: string): void {
+        this.get(location).color = color
+    }
+
+    getColor(location: Position): string {
+        return this.get(location).color
+    }
 }
 
-export function cellAt(maze: Maze, pos: Position): Cell {
-    return maze[pos.X][pos.Y]
+export interface MazeAlgorithm {
+    maze: Maze
+    /**
+     * Runs a single iteration of the algorithm.
+     * Return value indicates whether it finised or not.
+     */
+    step: () => boolean
 }
 
 export function move(pos: Position, direction: Direction): Position {
@@ -55,44 +121,5 @@ export function move(pos: Position, direction: Direction): Position {
             return {X: pos.X - 1, Y: pos.Y}
         case "east":
             return {X: pos.X + 1, Y: pos.Y}
-    }
-}
-
-export function neighborDirections(maze: Maze, pos: Position): Direction[] {
-    let result: Direction[] = []
-    
-    const width = maze.length
-    const height = maze[0].length
-
-    if (pos.X > 0) {
-        result.push("west")
-    }
-    if (pos.X < width - 1) {
-        result.push("east")
-    }
-    if (pos.Y > 0) {
-        result.push("south")
-    }
-    if (pos.Y < height - 1) {
-        result.push("north")
-    }
-
-    return result
-}
-
-export function openWall(maze: Maze, location: Position, direction: Direction) {
-    switch (direction) {
-        case "north":
-            cellAt(maze, location).northOpen = true
-            return
-        case "south":       
-            cellAt(maze, move(location, "south")).northOpen = true
-            return
-        case "west":
-            cellAt(maze, location).westOpen = true
-            return
-        case "east":
-            cellAt(maze, move(location, "east")).westOpen = true
-            return
     }
 }
