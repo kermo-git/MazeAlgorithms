@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { Maze } from "../Algorithms/Maze";
+import { P, Maze } from "../Algorithms/Maze";
 
 import "./MazeDisplay.css"
 
@@ -18,18 +18,19 @@ export function MazeDisplay({maze}: Props) {
 
     for (let X = 0; X < width; X++) {
         for (let Y = 0; Y < height; Y++) {
+            const pos = new P(X, Y)
             cells.push((
                 <div 
-                    key = {10*X + Y}
+                    key = {X + "_" + Y}
                     className = {
                         "cell" + 
-                        (maze.isOpen({X, Y}, "north") ? " north-open" : "") + 
-                        (maze.isOpen({X, Y}, "west") ? " west-open" : "")
+                        (maze.isOpen(pos, "north") ? " north-open" : "") + 
+                        (maze.isOpen(pos, "west") ? " west-open" : "")
                     }
                     style = {{
                         gridRow: height - Y,
                         gridColumn: X + 1,
-                        backgroundColor: maze.getColor({X, Y})
+                        backgroundColor: maze.getColor(pos)
                     }}
                 />
             ))

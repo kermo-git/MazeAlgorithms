@@ -1,33 +1,101 @@
 import * as React from "react"
+import { useState, useEffect } from "react"
 
 import { Maze } from "../Algorithms/Maze"
 import { MazeDisplay } from "./MazeDisplay"
 
 import "./App.css"
+import { RecursiveBactracker } from "../Algorithms/RecursiveBacktracker"
+
+let algorithm = new RecursiveBactracker(new Maze(8, 8))
+const BACKTRACKER = "Recursive backtracker"
+const DEFAULT_COLS = 8
+const DEFAULT_ROWS = 8
 
 export function App() {
-    // TODO:
-    // Dropdown menu for selecting algorithm
-    // Inputs for maze dimensions
-    // Button to advance one step in the algorithm
+    const [forceUpdateFlag, setForceUpdateFlag] = useState(false)
 
-    return (<MazeDisplay maze = {exampleMaze()}/>)
-}
+    function forceUpdate() {
+        setForceUpdateFlag(!forceUpdateFlag)
+    }
 
-function exampleMaze(): Maze {
-    const maze = new Maze(3, 3)
+    const [algoName, setAlgoName] = useState(BACKTRACKER)
+    const [mazeCols, setMazeCols] = useState(DEFAULT_COLS)
+    const [mazeRows, setMazeRows] = useState(DEFAULT_ROWS)
 
-    maze.openWall({X: 0, Y: 0}, "north")
-    maze.openWall({X: 0, Y: 1}, "north")
-    maze.openWall({X: 0, Y: 2}, "east")
-    maze.openWall({X: 1, Y: 2}, "east")
-    maze.openWall({X: 2, Y: 2}, "south")
-    maze.openWall({X: 2, Y: 1}, "south")
-    maze.openWall({X: 2, Y: 0}, "west")
-    maze.openWall({X: 1, Y: 0}, "north")
-    
-    maze.setColor({X: 1, Y: 1}, "lightblue")
-    maze.setColor({X: 0, Y: 2}, "gold")
+    function onSelectNRows(event) {
+        const rows = parseInt(event.target.value)
+        if (rows > 1) {
+            setMazeRows(rows)
+        }
+    }
 
-    return maze
+    function onSelectNCols(event) {
+        const cols = parseInt(event.target.value)
+        if (cols > 1) {
+            setMazeCols(cols)
+        }
+    }
+
+    function onStepClick() {
+        algorithm.step()
+        forceUpdate()
+    }
+
+    function onFinishClick() {
+        while (!algorithm.isFinished()) {
+            algorithm.step()
+        }
+        forceUpdate()
+    }
+
+    function restart() {
+        const maze = new Maze(mazeCols, mazeRows)
+        if (algoName == BACKTRACKER) {
+            algorithm = new RecursiveBactracker(maze)
+        }
+        forceUpdate()
+    }
+
+    useEffect(() => {
+        restart()
+    }, [algoName, mazeCols, mazeRows])
+
+    return (<>
+        <label>Select algorithm:</label>
+
+        <select onChange={(event) => {
+            setAlgoName(event.target.value)
+        }}>
+            <option>{BACKTRACKER}</option>
+        </select>
+
+        <label>Select number of columns:</label>
+
+        <input type = "number" defaultValue={DEFAULT_COLS} onChange={onSelectNCols}/>
+
+        <label>Select number of rows:</label>
+
+        <input type = "number" defaultValue={DEFAULT_ROWS} onChange={onSelectNRows}/>
+        
+        <button 
+            disabled={algorithm.isFinished()} 
+            onClick={onStepClick}
+        >
+            Step
+        </button>
+
+        <button 
+            disabled={algorithm.isFinished()} 
+            onClick={onFinishClick}
+        >
+            Finish
+        </button>
+
+        <button onClick={restart}>
+            Restart
+        </button>
+
+        <MazeDisplay maze = {algorithm.maze}/>
+    </>)
 }

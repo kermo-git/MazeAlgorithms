@@ -1,15 +1,42 @@
+export type Direction = "north" | "east" | "south" | "west"
+
+export class P {
+    X: number
+    Y: number
+
+    constructor(X: number, Y: number) {
+        this.X = X
+        this.Y = Y
+    }
+
+    move(direction: Direction): P {
+        switch (direction) {
+            case "north":
+                return new P(this.X, this.Y + 1)
+            case "south":       
+                return new P(this.X, this.Y - 1)
+            case "west":
+                return new P(this.X - 1, this.Y)
+            case "east":
+                return new P(this.X + 1, this.Y)
+        }
+    }
+}
+
+export function getRandomInt(minInclusive: number, maxExclusive: number) {
+    const cmin = Math.ceil(minInclusive)
+    const fmax = Math.floor(maxExclusive)
+    return Math.floor(Math.random() * (fmax - cmin) + cmin)
+}
+
+export function getRandomElement<T>(array: T[]): T {
+    return array[getRandomInt(0, array.length)]
+}
+
 interface Cell {
     northOpen: boolean
     westOpen: boolean
-    visited: boolean
     color: string
-}
-
-export type Direction = "north" | "east" | "south" | "west"
-
-export interface Position {
-    X: number
-    Y: number
 }
 
 export class Maze {
@@ -24,7 +51,6 @@ export class Maze {
                 column.push({
                     northOpen: false,
                     westOpen: false,
-                    visited: false,
                     color: "#FFFFFF"
                 })
             }
@@ -40,86 +66,110 @@ export class Maze {
         return this.cells[0].length
     }
 
-    neighborDirections({X, Y}: Position): Direction[] {
-        let result: Direction[] = []
+    getNeighbors(pos: P): P[] {
+        let result: P[] = []
     
-        if (X > 0) {
-            result.push("west")
+        if (pos.X > 0) {
+            result.push(pos.move("west"))
         }
-        if (X < this.nColumns() - 1) {
-            result.push("east")
+        if (pos.X < this.nColumns() - 1) {
+            result.push(pos.move("east"))
         }
-        if (Y > 0) {
-            result.push("south")
+        if (pos.Y > 0) {
+            result.push(pos.move("south"))
         }
-        if (Y < this.nRows() - 1) {
-            result.push("north")
+        if (pos.Y < this.nRows() - 1) {
+            result.push(pos.move("north"))
         }
     
         return result
     }
 
-    private get({X, Y}: Position): Cell {
+    private get({X, Y}: P): Cell {
         return this.cells[X][Y]
     }
 
-    openWall(location: Position, direction: Direction): void {
+    connectCells(cell1: P, cell2: P): void {
+        if (cell1.Y < cell2.Y) {
+            this.get(cell1).northOpen = true
+        }
+        else if (cell1.Y > cell2.Y) {
+            this.get(cell2).northOpen = true
+        }
+        else if (cell1.X < cell2.X) {
+            this.get(cell2).westOpen = true
+        }
+        else if (cell1.X > cell2.X) {
+            this.get(cell1).westOpen = true
+        }
+    }
+
+    openDirection(location: P, direction: Direction): void {
         switch (direction) {
             case "north":
                 this.get(location).northOpen = true
                 return
             case "south":       
-                this.get(move(location, "south")).northOpen = true
+                this.get(location.move("south")).northOpen = true
                 return
             case "west":
                 this.get(location).westOpen = true
                 return
             case "east":
-                this.get(move(location, "east")).westOpen = true
+                this.get(location.move("east")).westOpen = true
                 return
         }
     }
 
-    isOpen(location: Position, direction: Direction): boolean {
+    isOpen(location: P, direction: Direction): boolean {
         switch (direction) {
             case "north":
                 return this.get(location).northOpen
             case "south":       
-                return this.get(move(location, "south")).northOpen
+                return this.get(location.move("south")).northOpen
             case "west":
                 return this.get(location).westOpen
             case "east":
-                return this.get(move(location, "east")).westOpen
+                return this.get(location.move("east")).westOpen
         }
     }
 
-    setColor(location: Position, color: string): void {
+    setColor(location: P, color: string): void {
         this.get(location).color = color
     }
 
-    getColor(location: Position): string {
+    getColor(location: P): string {
         return this.get(location).color
     }
+
+    allPositions(): P[] {
+        const cols = this.nColumns()
+        const rows = this.nRows()
+        const result: P[] = []
+    
+        for (let X = 0; X < cols; X++) {
+            for (let Y = 0; Y < rows; Y++) {
+                result.push(new P(X, Y))
+            }
+        }
+        return result
+    }
 }
 
-export interface MazeAlgorithm {
+export abstract class MazeAlgorithm {
     maze: Maze
+    protected finished = false
+    
+    constructor(maze: Maze) {
+        this.maze = maze
+    }
+
+    isFinished(): boolean {
+        return this.finished
+    }
+
     /**
      * Runs a single iteration of the algorithm.
-     * Return value indicates whether it finised or not.
      */
-    step: () => boolean
-}
-
-export function move(pos: Position, direction: Direction): Position {
-    switch (direction) {
-        case "north":
-            return {X: pos.X, Y: pos.Y + 1}
-        case "south":       
-            return {X: pos.X, Y: pos.Y - 1}
-        case "west":
-            return {X: pos.X - 1, Y: pos.Y}
-        case "east":
-            return {X: pos.X + 1, Y: pos.Y}
-    }
+    abstract step(): void
 }

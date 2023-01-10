@@ -1,14 +1,11 @@
 import { Maze, MazeAlgorithm } from "./Maze";
 
-export class Kruskal implements MazeAlgorithm {
-    maze: Maze
-    
+export class Kruskal extends MazeAlgorithm {
     constructor(maze: Maze) {
-        this.maze = maze
+        super(maze)
     }
 
-    step(): boolean {
+    override step(): void {
         // TODO
-        return false
     }
 }
