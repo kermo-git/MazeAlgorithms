@@ -1,30 +1,30 @@
-import { P as Pos, Maze, MazeAlgorithm, getRandomElement } from "./Maze";
+import { Position, Maze, MazeAlgorithm, getRandomElement } from "./Maze";
 
 const STACK_COLOR = "#1682f4"
 const VISITED_COLOR = "#f5c016"
 
 export class RecursiveBactracker extends MazeAlgorithm {
-    private stack: Pos[] = []
+    private stack: Position[] = []
     
-    private push(pos: Pos) {
+    private push(pos: Position) {
         this.stack.push(pos)
     }
 
-    private peek(): Pos {
+    private peek(): Position {
         return this.stack[this.stack.length - 1]
     }
 
-    private pop(): Pos {
+    private pop(): Position {
         return this.stack.splice(this.stack.length - 1, 1)[0]
     }
 
     private visited: Set<string> = new Set()
 
-    visit(pos: Pos): void {
+    visit(pos: Position): void {
         this.visited.add(JSON.stringify(pos))
     }
 
-    isVisited(pos: Pos): boolean {
+    isVisited(pos: Position): boolean {
         return this.visited.has(JSON.stringify(pos))
     }
     

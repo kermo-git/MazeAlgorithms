@@ -1,6 +1,6 @@
 export type Direction = "north" | "east" | "south" | "west"
 
-export class P {
+export class Position {
     X: number
     Y: number
 
@@ -9,16 +9,16 @@ export class P {
         this.Y = Y
     }
 
-    move(direction: Direction): P {
+    move(direction: Direction): Position {
         switch (direction) {
             case "north":
-                return new P(this.X, this.Y + 1)
+                return new Position(this.X, this.Y + 1)
             case "south":       
-                return new P(this.X, this.Y - 1)
+                return new Position(this.X, this.Y - 1)
             case "west":
-                return new P(this.X - 1, this.Y)
+                return new Position(this.X - 1, this.Y)
             case "east":
-                return new P(this.X + 1, this.Y)
+                return new Position(this.X + 1, this.Y)
         }
     }
 }
@@ -66,8 +66,8 @@ export class Maze {
         return this.cells[0].length
     }
 
-    getNeighbors(pos: P): P[] {
-        let result: P[] = []
+    getNeighbors(pos: Position): Position[] {
+        let result: Position[] = []
     
         if (pos.X > 0) {
             result.push(pos.move("west"))
@@ -85,11 +85,11 @@ export class Maze {
         return result
     }
 
-    private get({X, Y}: P): Cell {
+    private get({X, Y}: Position): Cell {
         return this.cells[X][Y]
     }
 
-    connectCells(cell1: P, cell2: P): void {
+    connectCells(cell1: Position, cell2: Position): void {
         if (cell1.Y < cell2.Y) {
             this.get(cell1).northOpen = true
         }
@@ -104,7 +104,7 @@ export class Maze {
         }
     }
 
-    openDirection(location: P, direction: Direction): void {
+    openDirection(location: Position, direction: Direction): void {
         switch (direction) {
             case "north":
                 this.get(location).northOpen = true
@@ -121,7 +121,7 @@ export class Maze {
         }
     }
 
-    isOpen(location: P, direction: Direction): boolean {
+    isOpen(location: Position, direction: Direction): boolean {
         switch (direction) {
             case "north":
                 return this.get(location).northOpen
@@ -134,22 +134,22 @@ export class Maze {
         }
     }
 
-    setColor(location: P, color: string): void {
+    setColor(location: Position, color: string): void {
         this.get(location).color = color
     }
 
-    getColor(location: P): string {
+    getColor(location: Position): string {
         return this.get(location).color
     }
 
-    allPositions(): P[] {
+    allPositions(): Position[] {
         const cols = this.nColumns()
         const rows = this.nRows()
-        const result: P[] = []
+        const result: Position[] = []
     
         for (let X = 0; X < cols; X++) {
             for (let Y = 0; Y < rows; Y++) {
-                result.push(new P(X, Y))
+                result.push(new Position(X, Y))
             }
         }
         return result
