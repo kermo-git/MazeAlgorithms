@@ -1,27 +1,30 @@
-import { P as Pos, Maze, MazeAlgorithm, getRandomElement } from "./Maze";
+import { Position, Maze, MazeAlgorithm, getRandomElement } from "./Maze";
+
+const STACK_COLOR = "#1682f4"
+const VISITED_COLOR = "#f5c016"
 
 export class RecursiveBactracker extends MazeAlgorithm {
-    private stack: Pos[] = []
+    private stack: Position[] = []
     
-    private push(pos: Pos) {
+    private push(pos: Position) {
         this.stack.push(pos)
     }
 
-    private peek(): Pos {
+    private peek(): Position {
         return this.stack[this.stack.length - 1]
     }
 
-    private pop(): Pos {
+    private pop(): Position {
         return this.stack.splice(this.stack.length - 1, 1)[0]
     }
 
     private visited: Set<string> = new Set()
 
-    visit(pos: Pos): void {
+    visit(pos: Position): void {
         this.visited.add(JSON.stringify(pos))
     }
 
-    isVisited(pos: Pos): boolean {
+    isVisited(pos: Position): boolean {
         return this.visited.has(JSON.stringify(pos))
     }
     
@@ -29,7 +32,7 @@ export class RecursiveBactracker extends MazeAlgorithm {
         super(maze)
         
         const firstPos = getRandomElement(maze.allPositions())
-        maze.setColor(firstPos, "purple")
+        maze.setColor(firstPos, STACK_COLOR)
         this.push(firstPos)
         this.visit(firstPos)
     }
@@ -46,13 +49,13 @@ export class RecursiveBactracker extends MazeAlgorithm {
                 const nextNeighbor = getRandomElement(neighbors)
 
                 this.maze.connectCells(current, nextNeighbor)
-                this.maze.setColor(nextNeighbor, "purple")
+                this.maze.setColor(nextNeighbor, STACK_COLOR)
 
                 this.visit(nextNeighbor)
                 this.push(nextNeighbor)
             } else {
                 this.pop()
-                this.maze.setColor(current, "pink")
+                this.maze.setColor(current, VISITED_COLOR)
             }
         } else {
             this.finished = true

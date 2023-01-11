@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { P, Maze } from "../Algorithms/Maze";
+import { Position, Maze } from "../Algorithms/Maze";
 
 import "./MazeDisplay.css"
 
@@ -18,7 +18,7 @@ export function MazeDisplay({maze}: Props) {
 
     for (let X = 0; X < width; X++) {
         for (let Y = 0; Y < height; Y++) {
-            const pos = new P(X, Y)
+            const pos = new Position(X, Y)
             cells.push((
                 <div 
                     key = {X + "_" + Y}
