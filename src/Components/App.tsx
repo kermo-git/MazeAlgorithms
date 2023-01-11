@@ -1,14 +1,16 @@
 import * as React from "react"
 import { useState, useEffect } from "react"
 
-import { Maze } from "../Algorithms/Maze"
+import { Maze, MazeAlgorithm } from "../Algorithms/Maze"
 import { MazeDisplay } from "./MazeDisplay"
 
 import "./App.css"
 import { RecursiveBactracker } from "../Algorithms/RecursiveBacktracker"
+import { Kruskal } from "../Algorithms/Kruskal"
 
-let algorithm = new RecursiveBactracker(new Maze(8, 8))
+let algorithm: MazeAlgorithm = new RecursiveBactracker(new Maze(8, 8))
 const BACKTRACKER = "Recursive backtracker"
+const KRUSKAL = "Kruskal"
 const DEFAULT_COLS = 8
 const DEFAULT_ROWS = 8
 
@@ -53,6 +55,8 @@ export function App() {
         const maze = new Maze(mazeCols, mazeRows)
         if (algoName == BACKTRACKER) {
             algorithm = new RecursiveBactracker(maze)
+        } else if (algoName == KRUSKAL) {
+            algorithm = new Kruskal(maze)
         }
         forceUpdate()
     }
@@ -68,6 +72,7 @@ export function App() {
             setAlgoName(event.target.value)
         }}>
             <option>{BACKTRACKER}</option>
+            <option>{KRUSKAL}</option>
         </select>
 
         <label>Select number of columns:</label>

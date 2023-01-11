@@ -21,7 +21,13 @@ export class Position {
                 return new Position(this.X + 1, this.Y)
         }
     }
+
+    equals(other: Position): boolean {
+        return this.X == other.X && this.Y == other.Y
+    }
 }
+
+export type Edge = [Position, Position];
 
 export function getRandomInt(minInclusive: number, maxExclusive: number) {
     const cmin = Math.ceil(minInclusive)
@@ -32,6 +38,14 @@ export function getRandomInt(minInclusive: number, maxExclusive: number) {
 export function getRandomElement<T>(array: T[]): T {
     return array[getRandomInt(0, array.length)]
 }
+
+// https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+export function shuffle<T>(array: T[]): void {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+  }
 
 interface Cell {
     northOpen: boolean
@@ -153,6 +167,12 @@ export class Maze {
             }
         }
         return result
+    }
+
+    allEdges(): Edge[] {
+        return this.allPositions().flatMap(p =>
+            this.getNeighbors(p).map(n => [p, n] as Edge)
+        )
     }
 }
 
