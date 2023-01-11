@@ -8,8 +8,6 @@ interface Props {
     maze: Maze
 }
 
-const CELL_SIZE_PX = 100
-
 export function MazeDisplay({maze}: Props) {
     const width = maze.nColumns()
     const height = maze.nRows()
@@ -41,8 +39,9 @@ export function MazeDisplay({maze}: Props) {
         <div 
             className = "maze"
             style = {{
-                width: `${width * CELL_SIZE_PX}px`,
-                height: `${height * CELL_SIZE_PX}px`
+                aspectRatio: `${width} / ${height}`,
+                gridTemplateColumns: `repeat(${width}, 1fr)`,
+                gridTemplateRows: `repeat(${height}, 1fr)`
             }}
         >
             {cells}

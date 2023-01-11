@@ -65,7 +65,7 @@ export class Maze {
                 column.push({
                     northOpen: false,
                     westOpen: false,
-                    color: "#FFFFFF"
+                    color: "rgba(255, 255, 255, 0.8)"
                 })
             }
             this.cells.push(column)

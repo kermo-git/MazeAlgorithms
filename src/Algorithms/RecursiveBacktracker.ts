@@ -3,7 +3,7 @@ import { Position, Maze, MazeAlgorithm, getRandomElement } from "./Maze";
 const STACK_COLOR = "#1682f4"
 const VISITED_COLOR = "#f5c016"
 
-export class RecursiveBactracker extends MazeAlgorithm {
+export class RecursiveBacktracker extends MazeAlgorithm {
     private stack: Position[] = []
     
     private push(pos: Position) {

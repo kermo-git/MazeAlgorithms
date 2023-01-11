@@ -5,10 +5,10 @@ import { Maze, MazeAlgorithm } from "../Algorithms/Maze"
 import { MazeDisplay } from "./MazeDisplay"
 
 import "./App.css"
-import { RecursiveBactracker } from "../Algorithms/RecursiveBacktracker"
+import { RecursiveBacktracker } from "../Algorithms/RecursiveBacktracker"
 import { Kruskal } from "../Algorithms/Kruskal"
 
-let algorithm: MazeAlgorithm = new RecursiveBactracker(new Maze(8, 8))
+let algorithm: MazeAlgorithm = new RecursiveBacktracker(new Maze(8, 8))
 const BACKTRACKER = "Recursive backtracker"
 const KRUSKAL = "Kruskal"
 const DEFAULT_COLS = 8
@@ -54,7 +54,7 @@ export function App() {
     function restart() {
         const maze = new Maze(mazeCols, mazeRows)
         if (algoName == BACKTRACKER) {
-            algorithm = new RecursiveBactracker(maze)
+            algorithm = new RecursiveBacktracker(maze)
         } else if (algoName == KRUSKAL) {
             algorithm = new Kruskal(maze)
         }
@@ -65,42 +65,71 @@ export function App() {
         restart()
     }, [algoName, mazeCols, mazeRows])
 
-    return (<>
-        <label>Select algorithm:</label>
+    return (
+        <div className="app">
+            <div className="control-panel">
 
-        <select onChange={(event) => {
-            setAlgoName(event.target.value)
-        }}>
-            <option>{BACKTRACKER}</option>
-            <option>{KRUSKAL}</option>
-        </select>
+                <div className="control-group">
+                    <label>Algorithm</label>
+                    <select 
+                        className="control" 
+                        onChange={(event) => {
+                            setAlgoName(event.target.value)
+                        }}
+                    >
+                        <option>{BACKTRACKER}</option>
+                        <option>{KRUSKAL}</option>
+                    </select>
+                </div>
 
-        <label>Select number of columns:</label>
+                <div className="control-group">
+                    <label>Number of columns</label>
+                    <input 
+                        className="control" 
+                        type="number" 
+                        defaultValue={DEFAULT_COLS} 
+                        onChange={onSelectNCols}
+                    />
+                </div>
 
-        <input type = "number" defaultValue={DEFAULT_COLS} onChange={onSelectNCols}/>
+                <div className="control-group">
+                    <label>Number of rows</label>
+                    <input 
+                        className="control" 
+                        type="number" 
+                        defaultValue={DEFAULT_ROWS} 
+                        onChange={onSelectNRows}
+                    />
+                </div>
+                
+                <div className="control-group">
+                    <button 
+                        className="control"
+                        disabled={algorithm.isFinished()} 
+                        onClick={onStepClick}
+                    >
+                        Step
+                    </button>
 
-        <label>Select number of rows:</label>
+                    <button 
+                        className="control"
+                        disabled={algorithm.isFinished()} 
+                        onClick={onFinishClick}
+                    >
+                        Finish
+                    </button>
 
-        <input type = "number" defaultValue={DEFAULT_ROWS} onChange={onSelectNRows}/>
-        
-        <button 
-            disabled={algorithm.isFinished()} 
-            onClick={onStepClick}
-        >
-            Step
-        </button>
-
-        <button 
-            disabled={algorithm.isFinished()} 
-            onClick={onFinishClick}
-        >
-            Finish
-        </button>
-
-        <button onClick={restart}>
-            Restart
-        </button>
-
-        <MazeDisplay maze = {algorithm.maze}/>
-    </>)
+                    <button 
+                        className="control"
+                        onClick={restart}
+                    >
+                        Restart
+                    </button>
+                </div>
+            </div>
+            <div className="maze-panel">
+                <MazeDisplay maze = {algorithm.maze}/>
+            </div>
+        </div>
+    )
 }
