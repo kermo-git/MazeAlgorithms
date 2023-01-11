@@ -42,11 +42,11 @@
     padding: 3%;
 }
 
-button.control:hover {
+button:enabled:hover {
     background-color: rgba(255, 255, 255, 0.5);
 }
 
-button.control:active {
+button:enabled:active, button:disabled {
     background-color: rgba(255, 255, 255, 0.3);
 }
 
