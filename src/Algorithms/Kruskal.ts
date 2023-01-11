@@ -1,8 +1,8 @@
-import { Maze, MazeAlgorithm, getRandomElement, P, shuffle, Edge } from "./Maze";
+import { Maze, MazeAlgorithm, Position, shuffle, Edge } from "./Maze";
 
 export class Kruskal extends MazeAlgorithm {
 
-    private parents: Map<string, P> = new Map()
+    private parents: Map<string, Position> = new Map()
 
     private edges: Edge[]
 
@@ -15,15 +15,15 @@ export class Kruskal extends MazeAlgorithm {
         })
     }
 
-    private setParent(p: P, parent: P): void {
+    private setParent(p: Position, parent: Position): void {
         this.parents.set(JSON.stringify(p), parent)
     }
 
-    private getParent(p: P): P {
+    private getParent(p: Position): Position {
         return this.parents.get(JSON.stringify(p))
     }
 
-    private findParent(p: P): P {
+    private findParent(p: Position): Position {
         while (true) {
             const parent = this.getParent(p)
             if (p.equals(parent)) {
@@ -33,7 +33,7 @@ export class Kruskal extends MazeAlgorithm {
         }
     }
 
-    private union(p1: P, p2: P): void {
+    private union(p1: Position, p2: Position): void {
         const parent1 = this.findParent(p1)
         const parent2 = this.findParent(p2)
 

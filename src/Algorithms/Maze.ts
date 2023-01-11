@@ -22,12 +22,12 @@ export class Position {
         }
     }
 
-    equals(other: P): boolean {
+    equals(other: Position): boolean {
         return this.X == other.X && this.Y == other.Y
     }
 }
 
-export type Edge = [P, P];
+export type Edge = [Position, Position];
 
 export function getRandomInt(minInclusive: number, maxExclusive: number) {
     const cmin = Math.ceil(minInclusive)
