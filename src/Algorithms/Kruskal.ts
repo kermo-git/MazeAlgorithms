@@ -1,10 +1,17 @@
 import { Maze, MazeAlgorithm, Position, shuffle, Edge } from "./Maze";
 
+const SELECTED_COLOR = "#1682f4"
+const VISITED_COLOR = "#f5c016"
+
 export class Kruskal extends MazeAlgorithm {
 
     private parents: Map<string, Position> = new Map()
 
     private edges: Edge[]
+
+    private stepCount: number = 0
+
+    private currentEdge: Edge | undefined
 
     constructor(maze: Maze) {
         super(maze)
@@ -45,12 +52,19 @@ export class Kruskal extends MazeAlgorithm {
     }
 
     override step(): void {
-        const edge = this.edges.pop()
+        if (this.stepCount % 2 == 0) {
+            this.currentEdge = this.edges.pop()
 
-        if (edge !== undefined) {
-            const [p1, p2] = edge
-            this.maze.setColor(p1, "pink")
-            this.maze.setColor(p2, "pink")
+            if (this.currentEdge !== undefined) {
+                const [p1, p2] = this.currentEdge
+                this.maze.setColor(p1, SELECTED_COLOR)
+                this.maze.setColor(p2, SELECTED_COLOR)
+            } else {
+                this.finished = true
+            }
+
+        } else {
+            const [p1, p2] = this.currentEdge
             const parent1 = this.findParent(p1)
             const parent2 = this.findParent(p2)
 
@@ -58,8 +72,9 @@ export class Kruskal extends MazeAlgorithm {
                 this.maze.connectCells(p1, p2)
                 this.union(p1, p2)
             }
-        } else {
-            this.finished = true
+            this.maze.setColor(p1, VISITED_COLOR)
+            this.maze.setColor(p2, VISITED_COLOR)
         }
+        this.stepCount++
     }
 }
