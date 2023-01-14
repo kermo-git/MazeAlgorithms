@@ -7,10 +7,12 @@ import { MazeDisplay } from "./MazeDisplay"
 import "./App.css"
 import { RecursiveBacktracker } from "../Algorithms/RecursiveBacktracker"
 import { Kruskal } from "../Algorithms/Kruskal"
+import { Wilson } from "../Algorithms/Wilson"
 
 let algorithm: MazeAlgorithm = new RecursiveBacktracker(new Maze(8, 8))
 const BACKTRACKER = "Recursive backtracker"
 const KRUSKAL = "Kruskal"
+const WILSONS = "Wilson's"
 const DEFAULT_COLS = 8
 const DEFAULT_ROWS = 8
 
@@ -57,6 +59,8 @@ export function App() {
             algorithm = new RecursiveBacktracker(maze)
         } else if (algoName == KRUSKAL) {
             algorithm = new Kruskal(maze)
+        } else if (algoName == WILSONS) {
+            algorithm = new Wilson(maze)
         }
         forceUpdate()
     }
@@ -79,6 +83,7 @@ export function App() {
                     >
                         <option>{BACKTRACKER}</option>
                         <option>{KRUSKAL}</option>
+                        <option>{WILSONS}</option>
                     </select>
                 </div>
 
