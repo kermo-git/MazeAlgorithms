@@ -1,3 +1,5 @@
+export const EMPTY_POSITION_COLOR = "rgba(255, 255, 255, 0.8)"
+
 export type Direction = "north" | "east" | "south" | "west"
 
 export class Position {
@@ -65,7 +67,7 @@ export class Maze {
                 column.push({
                     northOpen: false,
                     westOpen: false,
-                    color: "rgba(255, 255, 255, 0.8)"
+                    color: EMPTY_POSITION_COLOR
                 })
             }
             this.cells.push(column)
@@ -80,23 +82,28 @@ export class Maze {
         return this.cells[0].length
     }
 
-    getNeighbors(pos: Position): Position[] {
-        let result: Position[] = []
+    getNeighborDirections(pos: Position): Direction[] {
+        const result: Direction[] = []
     
         if (pos.X > 0) {
-            result.push(pos.move("west"))
+            result.push("west")
         }
         if (pos.X < this.nColumns() - 1) {
-            result.push(pos.move("east"))
+            result.push("east")
         }
         if (pos.Y > 0) {
-            result.push(pos.move("south"))
+            result.push("south")
         }
         if (pos.Y < this.nRows() - 1) {
-            result.push(pos.move("north"))
+            result.push("north")
         }
     
         return result
+    }
+
+    getNeighbors(pos: Position): Position[] {
+        const directions = this.getNeighborDirections(pos)
+        return directions.map(direction => pos.move(direction))
     }
 
     private get({X, Y}: Position): Cell {
