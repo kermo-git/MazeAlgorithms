@@ -1,4 +1,5 @@
-import { Position, Maze, MazeAlgorithm, getRandomElement } from "./Maze";
+import { Position, Maze, MazeAlgorithm } from "./Maze";
+import { CustomSet, getRandomElement } from "./Utils"
 
 const STACK_COLOR = "#1682f4"
 const VISITED_COLOR = "#f5c016"
@@ -15,18 +16,10 @@ export class RecursiveBacktracker extends MazeAlgorithm {
     }
 
     private pop(): Position {
-        return this.stack.splice(this.stack.length - 1, 1)[0]
+        return this.stack.pop()
     }
 
-    private visited: Set<string> = new Set()
-
-    visit(pos: Position): void {
-        this.visited.add(JSON.stringify(pos))
-    }
-
-    isVisited(pos: Position): boolean {
-        return this.visited.has(JSON.stringify(pos))
-    }
+    private visited = new CustomSet<Position>()
     
     constructor(maze: Maze) {
         super(maze)
@@ -34,7 +27,7 @@ export class RecursiveBacktracker extends MazeAlgorithm {
         const firstPos = getRandomElement(maze.allPositions())
         maze.setColor(firstPos, STACK_COLOR)
         this.push(firstPos)
-        this.visit(firstPos)
+        this.visited.add(firstPos)
     }
 
     override step(): void {
@@ -42,7 +35,7 @@ export class RecursiveBacktracker extends MazeAlgorithm {
             const current = this.peek()
 
             let neighbors = this.maze.getNeighbors(current).filter(
-                neighbor => !this.isVisited(neighbor)
+                neighbor => !this.visited.has(neighbor)
             )
 
             if (neighbors.length != 0) {
@@ -51,7 +44,7 @@ export class RecursiveBacktracker extends MazeAlgorithm {
                 this.maze.connectCells(current, nextNeighbor)
                 this.maze.setColor(nextNeighbor, STACK_COLOR)
 
-                this.visit(nextNeighbor)
+                this.visited.add(nextNeighbor)
                 this.push(nextNeighbor)
             } else {
                 this.pop()

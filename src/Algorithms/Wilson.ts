@@ -1,4 +1,5 @@
-import { Maze, MazeAlgorithm, Position, getRandomElement, Direction, EMPTY_POSITION_COLOR } from "./Maze";
+import { Maze, MazeAlgorithm, Position, Direction, EMPTY_POSITION_COLOR } from "./Maze";
+import { CustomMap, CustomSet, getRandomElement } from "./Utils"
 
 const RANDOM_WALK_COLOR = "#1682f4"
 const UST_COLOR = "#f5c016"
@@ -8,7 +9,7 @@ const CUR_POS_COLOR = "yellow"
 // https://weblog.jamisbuck.org/2011/1/20/maze-generation-wilson-s-algorithm.html
 export class Wilson extends MazeAlgorithm {
 
-    private ust: Set<string> = new Set()
+    private ust = new CustomSet<Position>()
 
     private currentPos: Position
 
@@ -16,39 +17,27 @@ export class Wilson extends MazeAlgorithm {
 
     private randomWalkPosition: Position
 
-    private randomWalkDirections: Map<string, Direction> = new Map()
+    private randomWalkDirections = new CustomMap<Position, Direction>()
 
     constructor(maze: Maze) {
         super(maze)
         const firstPos = getRandomElement(maze.allPositions())
-        this.addToUst(firstPos)
+        this.ust.add(firstPos)
         maze.setColor(firstPos, UST_COLOR)
     }
 
-    private addToUst(pos: Position): void {
-        this.ust.add(JSON.stringify(pos))
-    }
-
-    private isInUst(pos: Position): boolean {
-        return this.ust.has(JSON.stringify(pos))
-    }
-
     private setRandomWalkDirection(direction: Direction): void {
-        this.randomWalkDirections.set(JSON.stringify(this.randomWalkPosition), direction)
-    }
-
-    private getRandomWalkDirection(pos: Position): Direction {
-        return this.randomWalkDirections.get(JSON.stringify(pos))
+        this.randomWalkDirections.set(this.randomWalkPosition, direction)
     }
 
     override step(): void {
         if (this.randomWalk) {
-            if (this.isInUst(this.randomWalkPosition)) {
+            if (this.ust.has(this.randomWalkPosition)) {
                 let p = this.currentPos
                 while (!p.equals(this.randomWalkPosition)) {
-                    this.addToUst(p)
+                    this.ust.add(p)
                     this.maze.setColor(p, UST_COLOR)
-                    const next = p.move(this.getRandomWalkDirection(p))
+                    const next = p.move(this.randomWalkDirections.get(p))
                     this.maze.connectCells(p, next)
                     p = next
                 }
@@ -69,7 +58,7 @@ export class Wilson extends MazeAlgorithm {
                 this.maze.setColor(this.randomWalkPosition, RANDOM_WALK_POS_COLOR)
             }
         } else {
-            const nonUstPositions = this.maze.allPositions().filter(p => !this.isInUst(p))
+            const nonUstPositions = this.maze.allPositions().filter(p => !this.ust.has(p))
             if (nonUstPositions.length == 0) {
                 this.finished = true
             } else {

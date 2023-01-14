@@ -1,11 +1,12 @@
-import { Maze, MazeAlgorithm, Position, shuffle, Edge } from "./Maze";
+import { Maze, MazeAlgorithm, Position, Edge } from "./Maze";
+import { CustomMap, shuffle } from "./Utils"
 
 const SELECTED_COLOR = "#1682f4"
 const VISITED_COLOR = "#f5c016"
 
 export class Kruskal extends MazeAlgorithm {
 
-    private parents: Map<string, Position> = new Map()
+    private parents = new CustomMap<Position, Position>()
 
     private edges: Edge[]
 
@@ -18,21 +19,13 @@ export class Kruskal extends MazeAlgorithm {
         this.edges = maze.allEdges()
         shuffle(this.edges)
         maze.allPositions().forEach(p => {
-            this.setParent(p, p)
+            this.parents.set(p, p)
         })
-    }
-
-    private setParent(p: Position, parent: Position): void {
-        this.parents.set(JSON.stringify(p), parent)
-    }
-
-    private getParent(p: Position): Position {
-        return this.parents.get(JSON.stringify(p))
     }
 
     private findParent(p: Position): Position {
         while (true) {
-            const parent = this.getParent(p)
+            const parent = this.parents.get(p)
             if (p.equals(parent)) {
                 return parent
             }
@@ -48,7 +41,7 @@ export class Kruskal extends MazeAlgorithm {
             return
         }
 
-        this.setParent(parent1, parent2)
+        this.parents.set(parent1, parent2)
     }
 
     override step(): void {
