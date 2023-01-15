@@ -13,9 +13,9 @@ export class Wilson extends MazeAlgorithm {
 
     private currentPos: Position
 
-    private randomWalk: boolean = false
+    private isRandomWalk: boolean = false
 
-    private randomWalkPosition: Position
+    private currentRandomWalkPos: Position
 
     private randomWalkDirections = new CustomMap<Position, Direction>()
 
@@ -27,35 +27,44 @@ export class Wilson extends MazeAlgorithm {
     }
 
     private setRandomWalkDirection(direction: Direction): void {
-        this.randomWalkDirections.set(this.randomWalkPosition, direction)
+        this.randomWalkDirections.set(this.currentRandomWalkPos, direction)
     }
 
     override step(): void {
-        if (this.randomWalk) {
-            if (this.ust.has(this.randomWalkPosition)) {
+        if (this.isRandomWalk) {
+            if (this.ust.has(this.currentRandomWalkPos)) {
                 let p = this.currentPos
-                while (!p.equals(this.randomWalkPosition)) {
+                while (!p.equals(this.currentRandomWalkPos)) {
                     this.ust.add(p)
                     this.maze.setColor(p, UST_COLOR)
                     const next = p.move(this.randomWalkDirections.get(p))
+                    this.randomWalkDirections.delete(p)
                     this.maze.connectCells(p, next)
                     p = next
                 }
                 this.maze.setColor(p, UST_COLOR)
-                this.maze.allPositions()
-                    .filter(p => this.maze.getColor(p) == RANDOM_WALK_COLOR)
-                    .forEach(p => this.maze.setColor(p, EMPTY_POSITION_COLOR))
-                this.randomWalk = false
+                this.isRandomWalk = false
+            } else if (this.randomWalkDirections.has(this.currentRandomWalkPos)) {
+                let p = this.currentRandomWalkPos
+                let isStart = true
+                while (isStart || !p.equals(this.currentRandomWalkPos)) {
+                    this.maze.setColor(p, EMPTY_POSITION_COLOR)
+                    const next = p.move(this.randomWalkDirections.get(p))
+                    this.randomWalkDirections.delete(p)
+                    p = next
+                    isStart = false
+                }
+                this.maze.setColor(this.currentRandomWalkPos, RANDOM_WALK_POS_COLOR)
             } else {
-                if (!this.randomWalkPosition.equals(this.currentPos)) {
-                    this.maze.setColor(this.randomWalkPosition, RANDOM_WALK_COLOR)
+                if (!this.currentRandomWalkPos.equals(this.currentPos)) {
+                    this.maze.setColor(this.currentRandomWalkPos, RANDOM_WALK_COLOR)
                 } else {
                     this.maze.setColor(this.currentPos, CUR_POS_COLOR)
                 }
-                const direction = getRandomElement(this.maze.getNeighborDirections(this.randomWalkPosition))
+                const direction = getRandomElement(this.maze.getNeighborDirections(this.currentRandomWalkPos))
                 this.setRandomWalkDirection(direction)
-                this.randomWalkPosition = this.randomWalkPosition.move(direction)
-                this.maze.setColor(this.randomWalkPosition, RANDOM_WALK_POS_COLOR)
+                this.currentRandomWalkPos = this.currentRandomWalkPos.move(direction)
+                this.maze.setColor(this.currentRandomWalkPos, RANDOM_WALK_POS_COLOR)
             }
         } else {
             const nonUstPositions = this.maze.allPositions().filter(p => !this.ust.has(p))
@@ -64,9 +73,8 @@ export class Wilson extends MazeAlgorithm {
             } else {
                 this.currentPos = getRandomElement(nonUstPositions)
                 this.maze.setColor(this.currentPos, CUR_POS_COLOR)
-                this.randomWalkPosition = this.currentPos
-                this.randomWalk = true
-                this.randomWalkDirections.clear()
+                this.currentRandomWalkPos = this.currentPos
+                this.isRandomWalk = true
             }
         }
     }
