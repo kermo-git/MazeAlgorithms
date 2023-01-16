@@ -160,7 +160,9 @@ export class Maze {
 
     allEdges(): Edge[] {
         return this.allPositions().flatMap(p =>
-            this.getNeighbors(p).map(n => [p, n] as Edge)
+            this.getNeighborDirections(p)
+                .filter(d => d == "north" || d == "west")
+                .map(d => [p, p.move(d)] as Edge)
         )
     }
 }
