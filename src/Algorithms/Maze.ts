@@ -107,19 +107,19 @@ export class Maze {
         }
     }
 
-    openDirection(location: Position, direction: Direction): void {
+    setOpen(location: Position, direction: Direction, isOpen: boolean): void {
         switch (direction) {
             case "north":
-                this.get(location).northOpen = true
+                this.get(location).northOpen = isOpen
                 return
             case "south":       
-                this.get(location.move("south")).northOpen = true
+                this.get(location.move("south")).northOpen = isOpen
                 return
             case "west":
-                this.get(location).westOpen = true
+                this.get(location).westOpen = isOpen
                 return
             case "east":
-                this.get(location.move("east")).westOpen = true
+                this.get(location.move("east")).westOpen = isOpen
                 return
         }
     }
