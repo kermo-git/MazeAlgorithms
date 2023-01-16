@@ -1,12 +1,12 @@
 import { Maze, MazeAlgorithm, Position, Edge } from "./Maze";
-import { CustomMap, shuffle } from "./Utils"
+import { CustomMap, shuffle, UnionFind } from "./Utils"
 
 const SELECTED_COLOR = "#1682f4"
 const VISITED_COLOR = "#f5c016"
 
 export class Kruskal extends MazeAlgorithm {
 
-    private parents = new CustomMap<Position, Position>()
+    private unionFind: UnionFind<Position>
 
     private edges: Edge[]
 
@@ -18,30 +18,7 @@ export class Kruskal extends MazeAlgorithm {
         super(maze)
         this.edges = maze.allEdges()
         shuffle(this.edges)
-        maze.allPositions().forEach(p => {
-            this.parents.set(p, p)
-        })
-    }
-
-    private findParent(p: Position): Position {
-        while (true) {
-            const parent = this.parents.get(p)
-            if (p.equals(parent)) {
-                return parent
-            }
-            p = parent
-        }
-    }
-
-    private union(p1: Position, p2: Position): void {
-        const parent1 = this.findParent(p1)
-        const parent2 = this.findParent(p2)
-
-        if (parent1.equals(parent2)) {
-            return
-        }
-
-        this.parents.set(parent1, parent2)
+        this.unionFind = new UnionFind(maze.allPositions())
     }
 
     override step(): void {
@@ -58,12 +35,10 @@ export class Kruskal extends MazeAlgorithm {
 
         } else {
             const [p1, p2] = this.currentEdge
-            const parent1 = this.findParent(p1)
-            const parent2 = this.findParent(p2)
 
-            if (!parent1.equals(parent2)) {
+            if (!this.unionFind.connected(p1, p2)) {
                 this.maze.connectCells(p1, p2)
-                this.union(p1, p2)
+                this.unionFind.union(p1, p2)
             }
             this.maze.setColor(p1, VISITED_COLOR)
             this.maze.setColor(p2, VISITED_COLOR)

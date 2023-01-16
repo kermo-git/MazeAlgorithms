@@ -59,3 +59,54 @@ export class CustomMap<K, V> {
         this.data.clear()
     }
 }
+
+export class UnionFind<T> {
+
+    private parents = new CustomMap<T, T>()
+    private sizes = new CustomMap<T, number>()
+
+    constructor(elements: T[]) {
+        elements.forEach(e => {
+            this.parents.set(e, e)
+            this.sizes.set(e, 1)
+        })
+    }
+
+    find(element: T): T {
+        while (true) {
+            const parent = this.parents.get(element)
+            if (this.equal(element, parent)) {
+                return parent
+            }
+            element = parent
+        }
+    }
+
+    union(element1: T, element2: T): void {
+        const parent1 = this.find(element1)
+        const parent2 = this.find(element2)
+
+        if (this.equal(parent1, parent2)) {
+            return
+        }
+
+        const size1 = this.sizes.get(parent1)
+        const size2 = this.sizes.get(parent2)
+
+        const [smaller, larger] = (size1 < size2) ? [parent1, parent2] : [parent2, parent1]
+
+        this.parents.set(smaller, larger)
+        this.sizes.set(larger, size1 + size2)
+    }
+
+    connected(element1: T, element2: T): boolean {
+        const parent1 = this.find(element1)
+        const parent2 = this.find(element2)
+
+        return this.equal(parent1, parent2)
+    }
+
+    private equal(e1: T, e2: T): boolean {
+        return JSON.stringify(e1) == JSON.stringify(e2)
+    }
+}
