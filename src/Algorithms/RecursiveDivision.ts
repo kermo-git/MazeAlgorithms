@@ -39,7 +39,7 @@ export class RecursiveDivision extends MazeAlgorithm {
 
         this.rooms.push(new MazeRoom(
             new Position(0, 0),
-            new Position(maze.nRows() - 1, maze.nRows() - 1)
+            new Position(maze.nColumns() - 1, maze.nRows() - 1)
         ))
     }
 
