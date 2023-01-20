@@ -20,3 +20,6 @@ I got inspiration for this project from [this blog](https://weblog.jamisbuck.org
 Run `npm start` and open `http://localhost:3000` in your browser. The browser automatically refreshes when you change the source code in `src` folder and save the file.
 
 You can change `localhost` port by `devServer.port` setting in `webpack.config.js`.
+
+## Demo
+https://ivantsiv-ut.github.io/
